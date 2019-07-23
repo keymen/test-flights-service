@@ -1,8 +1,11 @@
 from flask import Flask, request, jsonify
 from helpers import parse_xml_flights, flight_price, flight_time, filter_source_destination, analyse_min_max_time_price, \
     find_best_flight
+import logging
 
-app = Flask(__name__)
+app = Flask('flight-service')
+app.logger.setLevel(logging.INFO)
+
 flights_one_way = parse_xml_flights('search_responses/RS_ViaOW.xml')
 flights_with_return = parse_xml_flights('search_responses/RS_Via-3.xml')
 flights_one_way = filter_source_destination(flights_one_way)

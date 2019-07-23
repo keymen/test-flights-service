@@ -1,5 +1,9 @@
 import xml.etree.ElementTree as ElementTree
 from datetime import datetime
+import logging
+
+log = logging.getLogger('flight-service.helper')
+
 DATETIME_FORMAT = "%Y-%m-%dT%H%M"
 
 
@@ -116,9 +120,9 @@ def analyse_min_max_time_price(loc_flights, one_way=False):
     """
 
     if one_way:
-        print('One way')
+        log.info('One way')
     else:
-        print('With return')
+        log.info('With return')
     if one_way:
         sorted_flights = sorted(loc_flights, key=lambda flight: flight_time(flight['OnwardPricedItinerary']))
     else:
@@ -127,18 +131,18 @@ def analyse_min_max_time_price(loc_flights, one_way=False):
                                                    + flight_time(flight['ReturnPricedItinerary'])
                                 )
     flight_time_value_fastest, price_value_fastest = get_info(sorted_flights[0], one_way)
-    print('Cheapest', 'Time', flight_time_value_fastest, 'Price', price_value_fastest)
+    log.info(f'Fastest Time: {flight_time_value_fastest} Price: {price_value_fastest}')
 
     sorted_flights = sorted(loc_flights, key=lambda flight: flight_price(flight))
     flight_time_value_cheapest, price_value_cheapest = get_info(sorted_flights[0], one_way)
 
-    print('Cheapest', 'Time', flight_time_value_cheapest, 'Price', price_value_cheapest)
+    log.info(f'Cheapest Time: {flight_time_value_cheapest} Price: {price_value_cheapest}')
 
     # Coefficient means how many SGD costs second in airplane
     time_price_coef = (price_value_fastest-price_value_cheapest)\
-                      /(flight_time_value_cheapest.total_seconds()-flight_time_value_fastest.total_seconds())
+                      / (flight_time_value_cheapest.total_seconds()-flight_time_value_fastest.total_seconds())
 
-    print('Time price coef', time_price_coef)
+    log.info(f'Time price coef {time_price_coef}')
     return time_price_coef
 
 
